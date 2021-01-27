@@ -40,11 +40,11 @@ def menu():
         from program.userSearch import main
         main(RETURN=False)
     elif option == '3':
-        picOrUser = (input('Image or User? [I/u] ')).lower()
+        picOrUser = (input('Content or User? [C/u] ')).lower()
         if picOrUser == 'u':
             from program.picker import picker
             picker(MODE='usr')
-        elif picOrUser == 'i':
+        elif picOrUser == 'c':
             from program.picker import picker
             picker(MODE='img')
 

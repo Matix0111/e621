@@ -38,9 +38,21 @@ def picker(MODE=None):
                     except IndexError:
                         print('Artist not specified.')
                 else:
-                    out = ""
                     output = ret['post'][KEY1][KEY2]
-                    output = out.join(output)
+                    try:
+                        output = output.split(' ')
+                    except AttributeError:
+                        print(output[0] + ", " + output[1])
+                        continue
+
+                    opt0 = output[0]
+                    try:
+                        opt1 = output[1]
+                    except IndexError:
+                        print(output[0])
+                        continue
+
+                    output = f'{opt0}, {opt1}'
                     if str(output) == '[]':
                         print('No artist.')
                     else:

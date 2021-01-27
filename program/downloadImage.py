@@ -5,7 +5,7 @@ import random
 from requests.auth import HTTPBasicAuth
 import configparser
 import os
-from os import path
+import mainP
 
 config = configparser.ConfigParser()
 config.read('info.ini')
@@ -37,6 +37,7 @@ def main():
             print('========================')
             print(f'SUCCESSFULLY SAVED AS {full_name}!')
             print('========================')
+    mainP.menu()
 
 def credCheck():
     if e6Key == 'Z' and e6User == 'Z':
@@ -51,5 +52,5 @@ def credCheck():
     else:
         main()
 
-if __name__ == '__main__':
+if __name__ != '__main__':
     credCheck()

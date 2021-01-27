@@ -42,7 +42,10 @@ def picker(MODE=None):
                     try:
                         output = output.split(' ')
                     except AttributeError:
-                        print(output[0] + ", " + output[1])
+                        try:
+                            print(output[0] + ", " + output[1])
+                        except IndexError:
+                            print(output[0])
                         continue
 
                     opt0 = output[0]

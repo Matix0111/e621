@@ -14,7 +14,7 @@ config.read('info.ini')
 e6User = config['AUTH']['e6User']
 e6Key = config['AUTH']['e6Key']
 
-def main():
+def main(RETURN=False, response0JSON=None):
     exit = False
     print('Enter "-q" as username to quit.')
     while not exit:
@@ -35,17 +35,19 @@ def main():
                 response0 = requests.get(f'https://e621.net/users/{userID}.json', headers=headers, auth=(f'{e6User}', f'{e6Key}'))
                 time.sleep(1)
                 response0JSON = response0.json()
+                if RETURN:
+                    return response0JSON
+                else:
+                    username = response0JSON['name']
+                    banned = response0JSON['is_banned']
+                    avatarID = response0JSON['avatar_id']
 
-                username = response0JSON['name']
-                banned = response0JSON['is_banned']
-                avatarID = response0JSON['avatar_id']
+                    print(f'User ID: {userID}')
+                    print(f'Username: {username}')
+                    print(f'Banned: {banned}')
+                    print(f'Avatar ID: {avatarID}')
 
-                print(f'User ID: {userID}')
-                print(f'Username: {username}')
-                print(f'Banned: {banned}')
-                print(f'Avatar ID: {avatarID}')
-
-def credCheck():
+def credCheck(RETURN=False):
     if e6Key == 'Z' and e6User == 'Z':
         username = input('E6 Username: ')
         api_key = input('E6 API key: ')
@@ -56,7 +58,7 @@ def credCheck():
         config.get('AUTH', 'e6Key')
         config.set('AUTH', 'e6Key', api_key)
     else:
-        main()
+        main(RETURN=RETURN)
 
-if __name__ != '__main__':
-    credCheck()
+# if __name__ != '__main__':
+#     credCheck()

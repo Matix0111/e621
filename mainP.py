@@ -34,9 +34,11 @@ def menu():
     option = input('\nChoice: ')
 
     if option == '1':
-        import program.downloadImage
+        from program.downloadImage import main
+        main(RETURN=False)
     elif option == '2':
-        import program.userSearch
+        from program.userSearch import main
+        main(RETURN=False)
     elif option == '3':
         picOrUser = (input('Image or User? [I/u] ')).lower()
         if picOrUser == 'u':

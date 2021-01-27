@@ -14,7 +14,7 @@ config.read('info.ini')
 e6User = config['AUTH']['e6User']
 e6Key = config['AUTH']['e6Key']
 
-def main(RETURN=False, response0JSON=None):
+def main(RETURN=False):
     exit = False
     print('Enter "-q" as username to quit.')
     while not exit:

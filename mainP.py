@@ -47,6 +47,7 @@ def menu():
             picker(MODE='img')
 
     elif option == '99':
+        print('Thanks for using! Goodbye!')
         pass
 
 if __name__ == '__main__':

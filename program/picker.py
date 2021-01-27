@@ -1,5 +1,6 @@
 import program.userSearch
 import program.downloadImage
+import mainP
 
 def picker(MODE=None):
     if MODE == 'img':
@@ -8,7 +9,10 @@ def picker(MODE=None):
         exit = False
         print('Type "help" for a list of commands.')
         while not exit:
-            command = (input('PICKER > ')).lower()
+            try:
+                command = (input('\nPICKER > ')).lower()
+            except KeyboardInterrupt:
+                continue
 
             if command == 'help':
                 print('keys - View the keys')
@@ -40,6 +44,9 @@ def picker(MODE=None):
                         print('No artist.')
                     else:
                         print(output)
+            elif command == 'q':
+                exit = True
+        mainP.menu()
 
     elif MODE == 'usr':
         ret = program.userSearch.main(RETURN=True)
@@ -47,7 +54,10 @@ def picker(MODE=None):
         exit = False
         print('Type "help" for a list of commands.')
         while not exit:
-            command = (input('PICKER > ')).lower()
+            try:
+                command = (input('\nPICKER > ')).lower()
+            except KeyboardInterrupt:
+                continue
 
             if command == 'help':
                 print('keys - View the keys')
@@ -66,5 +76,8 @@ def picker(MODE=None):
                     print(ret[KEY])
                 except KeyError:
                     print('Invalid key!')
+            elif command == 'q':
+                exit = True
+        mainP.menu()
     else:
         print('Something is misconfigured.')

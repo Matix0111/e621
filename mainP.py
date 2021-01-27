@@ -1,4 +1,3 @@
-import program.userSearch as uS
 import subprocess as sp
 
 def menu():
@@ -36,7 +35,7 @@ def menu():
     if option == '1':
         import program.downloadImage
     elif option == '2':
-        pass
+        import program.userSearch
     elif option == '99':
         pass
 

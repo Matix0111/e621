@@ -13,7 +13,7 @@ config.read('info.ini')
 e6User = config['AUTH']['e6User']
 e6Key = config['AUTH']['e6Key']
 
-def main():
+def main(RETURN=False):
     exit = False
     print('Enter "q" as post ID to quit.')
     while not exit:
@@ -26,20 +26,23 @@ def main():
             responseRAW = requests.get(f'https://e621.net/posts/{post_id}.json', headers=headers, auth=(f'{e6User}', f'{e6Key}'))
             responseJSON = responseRAW.json()
 
-            url = responseJSON['post']['file']['url']
+            if RETURN:
+                return responseJSON
+            else:
+                url = responseJSON['post']['file']['url']
 
-            fileExt = url.split('.')
-            fileExt = fileExt[-1]
+                fileExt = url.split('.')
+                fileExt = fileExt[-1]
 
-            filename = random.randint(1, 10000)
-            full_name = f'DLs/{filename}.{fileExt}'
-            urllib.request.urlretrieve(url, full_name)
-            print('========================')
-            print(f'SUCCESSFULLY SAVED AS {full_name}!')
-            print('========================')
+                filename = random.randint(1, 10000)
+                full_name = f'DLs/{filename}.{fileExt}'
+                urllib.request.urlretrieve(url, full_name)
+                print('========================')
+                print(f'SUCCESSFULLY SAVED AS {full_name}!')
+                print('========================')
     mainP.menu()
 
-def credCheck():
+def credCheck(RETURN=False):
     if e6Key == 'Z' and e6User == 'Z':
         username = input('E6 Username: ')
         api_key = input('E6 API key: ')
@@ -50,7 +53,4 @@ def credCheck():
         config.get('AUTH', 'e6Key')
         config.set('AUTH', 'e6Key', api_key)
     else:
-        main()
-
-if __name__ != '__main__':
-    credCheck()
+        main(RETURN=RETURN)

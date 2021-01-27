@@ -42,6 +42,9 @@ def menu():
         if picOrUser == 'u':
             from program.picker import picker
             picker(MODE='usr')
+        elif picOrUser == 'i':
+            from program.picker import picker
+            picker(MODE='img')
 
     elif option == '99':
         pass

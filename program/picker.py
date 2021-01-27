@@ -9,6 +9,7 @@ def picker(MODE=None):
         exit = False
         print('Type "help" for a list of commands.')
         while not exit:
+            
             try:
                 command = (input('\nPICKER > ')).lower()
             except KeyboardInterrupt:
@@ -54,6 +55,7 @@ def picker(MODE=None):
         exit = False
         print('Type "help" for a list of commands.')
         while not exit:
+
             try:
                 command = (input('\nPICKER > ')).lower()
             except KeyboardInterrupt:

@@ -29,6 +29,7 @@ def menu():
     print('\t Download Image [1]')
     print('\t User Search    [2]')
     print('\t Explorer       [3]')
+    print('\t MD5 To Post    [4]')
     print('\t Exit Program   [99]')
 
     option = input('\nChoice: ')
@@ -47,6 +48,9 @@ def menu():
         elif picOrUser == 'c':
             from program.picker import picker
             picker(MODE='img')
+    elif option == '4':
+        from program.md5_to_post import main
+        main()
 
     elif option == '99':
         print('Thanks for using! Goodbye!')

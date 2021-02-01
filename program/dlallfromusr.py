@@ -21,7 +21,7 @@ class gatherPosts():
         self.pages = 0
         self.IDs = []
         self.tag = ""
-        self.headers = {'user-agent': 'testProject (By Matix on e621)'}
+        self.headers = {'user-agent': 'e6Program (By Matix on e621)'}
 
     def getIDs(self, pages, tag):
         print('Gathering post IDs')
@@ -65,7 +65,7 @@ class downloadPosts():
         self.IDs = IDs
         self.artist = Artist
         self.tag = tag
-        self.headers = {'user-agent': 'testProject (By Matix on e621)'}
+        self.headers = {'user-agent': 'e6Program (By Matix on e621)'}
 
     def gatherURLs(self):
         print('Downloading images.')

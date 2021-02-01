@@ -26,11 +26,12 @@ def menu():
 
     print('OPTIONS:\n')
 
-    print('\t Download Image [1]')
-    print('\t User Search    [2]')
-    print('\t Explorer       [3]')
-    print('\t MD5 To Post    [4]')
-    print('\t Exit Program   [99]')
+    print('\t Download Image            [1]')
+    print('\t User Search               [2]')
+    print('\t Explorer                  [3]')
+    print('\t MD5 To Post               [4]')
+    print('\t Download All From User    [5]')
+    print('\t Exit Program              [99]')
 
     option = input('\nChoice: ')
 
@@ -51,6 +52,8 @@ def menu():
     elif option == '4':
         from program.md5_to_post import main
         main()
+    elif option == '5':
+        import program.dlallfromusr
 
     elif option == '99':
         print('Thanks for using! Goodbye!')

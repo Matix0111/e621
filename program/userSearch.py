@@ -5,6 +5,7 @@ import random
 from requests.auth import HTTPBasicAuth
 import configparser
 import time
+import mainP
 
 headers = {'user-agent': 'e621-image-downloader-project (by Matix on e621)'}
 
@@ -46,19 +47,7 @@ def main(RETURN=False):
                     print(f'Username: {username}')
                     print(f'Banned: {banned}')
                     print(f'Avatar ID: {avatarID}')
-
-def credCheck(RETURN=False):
-    if e6Key == 'Z' and e6User == 'Z':
-        username = input('E6 Username: ')
-        api_key = input('E6 API key: ')
-
-        config.get('AUTH', 'e6User')
-        config.set('AUTH', 'e6User', username)
-
-        config.get('AUTH', 'e6Key')
-        config.set('AUTH', 'e6Key', api_key)
-    else:
-        main(RETURN=RETURN)
+    mainP.menu()
 
 # if __name__ != '__main__':
 #     credCheck()

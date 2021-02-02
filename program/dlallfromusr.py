@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+import shutil
 import time
 import configparser
 import urllib.request
@@ -70,7 +71,19 @@ class downloadPosts():
     def gatherURLs(self):
         print('Downloading images.')
         num = 0
-        os.mkdir(f'DLs/{self.artist}')
+        try:
+            os.mkdir(f'DLs/{self.artist}')
+        except FileExistsError:
+            overwrite = (input('The directory for this user already exists. Overwrite or abort? [O/a] ')).lower()
+
+            if overwrite == 'o':
+                shutil.rmtree(f'DLs/{self.artist}')
+                os.mkdir(f'DLs/{self.artist}')
+            elif overwrite == 'a':
+                print('Abort.')
+                import mainP
+                mainP.menu()
+
         for i in tqdm(range(len(self.IDs))):
             response = requests.get(f'https://e621.net/posts/{self.IDs[i]}.json', headers=self.headers, auth=(self.user, self.api_key))
             responseJSON = response.json()
@@ -84,7 +97,10 @@ class downloadPosts():
 
             filename = f'{self.artist}_{num}'
             full_name = f'DLs/{self.artist}/{filename}.{fileExt}'
-            urllib.request.urlretrieve(url, full_name)
+            try:
+                urllib.request.urlretrieve(url, full_name)
+            except urllib.error.URLError:
+                print('Connection timed out!')
             num += 1
             time.sleep(1)
 

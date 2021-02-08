@@ -35,7 +35,6 @@ class gatherPosts():
 
             try:
                 os.mkdir(f'DLs/pool_{self.poolID}')
-                fileMade = True
             except FileExistsError:
                 overwrite = (input('The directory for this user already exists. Overwrite or abort? [O/a] ')).lower()
 

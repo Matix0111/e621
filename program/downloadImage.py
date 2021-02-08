@@ -5,6 +5,7 @@ import random
 from requests.auth import HTTPBasicAuth
 import configparser
 import os
+import time
 import mainP
 
 config = configparser.ConfigParser()
@@ -16,30 +17,37 @@ e6Key = config['AUTH']['e6Key']
 def main(RETURN=False):
     exit = False
     print('Enter "q" as post ID to quit.')
-    while not exit:
-        post_id = input('Post ID: ')
 
-        if post_id == 'q':
-            exit = True
-        else:
-            headers = {'user-agent': 'e621-image-downloader-project (by Matix on e621)'}
-            responseRAW = requests.get(f'https://e621.net/posts/{post_id}.json', headers=headers, auth=(f'{e6User}', f'{e6Key}'))
-            responseJSON = responseRAW.json()
+    try:
+        os.mkdir('DLs/')
+    except FileExistsError:
+        print('DLs directory already made and found.')
+        while not exit:
+            post_id = input('Post ID: ')
 
-            if RETURN:
-                return responseJSON
+            if post_id == 'q':
+                exit = True
             else:
-                url = responseJSON['post']['file']['url']
+                headers = {'user-agent': 'e621-image-downloader-project (by Matix on e621)'}
+                responseRAW = requests.get(f'https://e621.net/posts/{post_id}.json', headers=headers, auth=(f'{e6User}', f'{e6Key}'))
+                responseJSON = responseRAW.json()
 
-                fileExt = url.split('.')
-                fileExt = fileExt[-1]
+                if RETURN:
+                    return responseJSON
+                else:
+                    url = responseJSON['post']['file']['url']
 
-                filename = random.randint(1, 10000)
-                full_name = f'DLs/{filename}.{fileExt}'
-                urllib.request.urlretrieve(url, full_name)
-                print('========================')
-                print(f'SUCCESSFULLY SAVED AS {full_name}!')
-                print('========================')
+                    fileExt = url.split('.')
+                    fileExt = fileExt[-1]
+
+                    filename = random.randint(1, 10000)
+                    full_name = f'DLs/{filename}.{fileExt}'
+                    urllib.request.urlretrieve(url, full_name)
+                    print('========================')
+                    print(f'SUCCESSFULLY SAVED AS {full_name}!')
+                    print('========================')
+
+    time.sleep(5)
     mainP.menu()
 
 def credCheck(RETURN=False):

@@ -3,6 +3,7 @@ import json
 import os
 import shutil
 import time
+import logging
 import configparser
 import urllib.request
 from tqdm import tqdm
@@ -56,6 +57,7 @@ class gatherPosts():
 
     def signin(self):
         self.tag = input('Artist/Tag: ')
+        artist = self.tag
         self.getMaxPages(self.tag)
 
 class downloadPosts():
@@ -71,19 +73,6 @@ class downloadPosts():
     def gatherURLs(self):
         print('Downloading images.')
         num = 0
-        try:
-            os.mkdir(f'DLs/{self.artist}')
-        except FileExistsError:
-            overwrite = (input('The directory for this user already exists. Overwrite or abort? [O/a] ')).lower()
-
-            if overwrite == 'o':
-                shutil.rmtree(f'DLs/{self.artist}')
-                os.mkdir(f'DLs/{self.artist}')
-            elif overwrite == 'a':
-                print('Abort.')
-                import mainP
-                mainP.menu()
-
         for i in tqdm(range(len(self.IDs))):
             response = requests.get(f'https://e621.net/posts/{self.IDs[i]}.json', headers=self.headers, auth=(self.user, self.api_key))
             responseJSON = response.json()
@@ -101,7 +90,9 @@ class downloadPosts():
                 urllib.request.urlretrieve(url, full_name)
             except urllib.error.URLError:
                 print('Connection timed out!')
+                
             num += 1
+            logging.info(f'Downloaded image {full_name}!')
             time.sleep(1)
 
 e6User = config['AUTH']['e6User']
@@ -112,6 +103,30 @@ O.signin()
 
 IDs = O.IDs
 tag = O.tag
+
+fileMade = False
+
+try:
+    os.mkdir(f'DLs/{tag}')
+    fileMade = True
+except FileExistsError:
+    overwrite = (input('The directory for this user already exists. Overwrite or abort? [O/a] ')).lower()
+
+    if overwrite == 'o':
+        shutil.rmtree(f'DLs/{tag}')
+        os.mkdir(f'DLs/{tag}')
+        fileMade = False
+    elif overwrite == 'a':
+        print('Abort.')
+        mainP.menu()
+
+logging.basicConfig(filename=f'DLs/{tag}/{tag}_DL_LOG.log', level=logging.INFO, 
+    format='%(asctime)s:DL_IMG:%(message)s')
+
+if fileMade:
+    logging.info(f'Directory DLs/{tag} created!')
+else:
+    logging.info(f'Directory DLs/{tag} overwritten!')
 
 D = downloadPosts(e6User, e6Key, IDs, tag)
 D.gatherURLs()

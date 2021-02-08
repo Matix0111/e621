@@ -4,6 +4,7 @@ import os
 import shutil
 import time
 import logging
+import mainP
 import configparser
 import urllib.request
 from tqdm import tqdm
@@ -19,23 +20,70 @@ class gatherPosts():
     def __init__(self, user, api_key):
         self.user = user
         self.api_key = api_key
-        self.artist = ""
         self.pages = 0
         self.IDs = []
+        self.poolID = 0
         self.tag = ""
         self.headers = {'user-agent': 'e6Program (By Matix on e621)'}
 
-    def getIDs(self, pages, tag):
-        print('Gathering post IDs')
-        for i in tqdm(range(pages)):
-            response = requests.get(f'https://e621.net/posts.json?page={i}&tags={tag}', headers=self.headers, auth=(self.user, self.api_key))
+    def getIDs(self, pages=None, tag=None, POOLVALUE=False):
+        if pages == None and tag == None and POOLVALUE == True:
+            response = requests.get(f'https://e621.net/pools/{self.poolID}.json', headers=self.headers, auth=(self.user, self.api_key))
             responseJSON = response.json()
 
-            data = responseJSON['posts']
+            data1 = responseJSON['post_ids']
 
-            for i in range(len(data)):
-                self.IDs.append(data[i]['id'])
-            time.sleep(1)
+            try:
+                os.mkdir(f'DLs/pool_{self.poolID}')
+                fileMade = True
+            except FileExistsError:
+                overwrite = (input('The directory for this user already exists. Overwrite or abort? [O/a] ')).lower()
+
+                if overwrite == 'o':
+                    shutil.rmtree(f'DLs/pool_{self.poolID}')
+                    os.mkdir(f'DLs/pool_{self.poolID}')
+                    fileMade = False
+                elif overwrite == 'a':
+                    print('Abort.')
+                    mainP.menu()
+
+            print('Downloading images.')
+
+            num = 0
+            for i in tqdm(range(len(data1))):
+                response = requests.get(f'https://e621.net/posts/{data1[i]}.json', headers=self.headers, auth=(self.user, self.api_key))
+                responseJSON = response.json()
+
+                data = responseJSON['post']['file']['url']
+
+                url = data
+
+                fileExt = url.split('.')
+                fileExt = fileExt[-1]
+
+                filename = f'{num}'
+                full_name = f'DLs/pool_{self.poolID}/{filename}.{fileExt}'
+                try:
+                    urllib.request.urlretrieve(url, full_name)
+                except urllib.error.URLError:
+                    print('Connection timed out!')
+                    
+                num += 1
+                logging.info(f'Downloaded image {full_name}!')
+                time.sleep(1)
+            mainP.menu()
+        else:
+
+            print('Gathering post IDs')
+            for i in tqdm(range(pages)):
+                response = requests.get(f'https://e621.net/posts.json?page={i}&tags={tag}', headers=self.headers, auth=(self.user, self.api_key))
+                responseJSON = response.json()
+
+                data = responseJSON['posts']
+
+                for i in range(len(data)):
+                    self.IDs.append(data[i]['id'])
+                time.sleep(1)
 
         print('GATHERED IDs')
 
@@ -56,8 +104,15 @@ class gatherPosts():
         self.getIDs(self.pages, tag)
 
     def signin(self):
-        self.tag = input('Artist/Tag: ')
-        self.getMaxPages(self.tag)
+        self.tag = input('Artist/Tag (indicate a pool with pool_<post_id> ): ')
+        poolIndicator = self.tag[0:4]
+        if poolIndicator == 'pool':
+            self.poolID = self.tag.split('_')
+            self.poolID = self.poolID[1]
+            # print(poolID)
+            self.getIDs(pages=None, tag=None, POOLVALUE=True)
+        else:
+            self.getMaxPages(self.tag)
 
 class downloadPosts():
 

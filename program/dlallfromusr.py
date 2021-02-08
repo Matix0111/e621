@@ -31,17 +31,17 @@ class gatherPosts():
             response = requests.get(f'https://e621.net/pools/{self.poolID}.json', headers=self.headers, auth=(self.user, self.api_key))
             responseJSON = response.json()
 
+            name = responseJSON['name']
             data1 = responseJSON['post_ids']
 
             try:
-                os.mkdir(f'DLs/pool_{self.poolID}')
+                os.mkdir(f'DLs/pool_{name}')
             except FileExistsError:
                 overwrite = (input('The directory for this user already exists. Overwrite or abort? [O/a] ')).lower()
 
                 if overwrite == 'o':
-                    shutil.rmtree(f'DLs/pool_{self.poolID}')
-                    os.mkdir(f'DLs/pool_{self.poolID}')
-                    fileMade = False
+                    shutil.rmtree(f'DLs/pool_{name}')
+                    os.mkdir(f'DLs/pool_{name}')
                 elif overwrite == 'a':
                     print('Abort.')
                     mainP.menu()
@@ -61,7 +61,7 @@ class gatherPosts():
                 fileExt = fileExt[-1]
 
                 filename = f'{num}'
-                full_name = f'DLs/pool_{self.poolID}/{filename}.{fileExt}'
+                full_name = f'DLs/pool_{name}/{filename}.{fileExt}'
                 try:
                     urllib.request.urlretrieve(url, full_name)
                 except urllib.error.URLError:
@@ -70,7 +70,8 @@ class gatherPosts():
                 num += 1
                 logging.info(f'Downloaded image {full_name}!')
                 time.sleep(1)
-            mainP.menu()
+            print('Finished.')
+            time.sleep(5)
         else:
 
             print('Gathering post IDs')
@@ -103,7 +104,7 @@ class gatherPosts():
         self.getIDs(self.pages, tag)
 
     def signin(self):
-        self.tag = input('Artist/Tag (indicate a pool with pool_<post_id> ): ')
+        self.tag = input('Artist/Tag (indicate a pool with pool_<pool_id> ): ')
         poolIndicator = self.tag[0:4]
         if poolIndicator == 'pool':
             self.poolID = self.tag.split('_')

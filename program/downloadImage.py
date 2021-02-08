@@ -47,7 +47,6 @@ def main(RETURN=False):
                     print(f'SUCCESSFULLY SAVED AS {full_name}!')
                     print('========================')
 
-    time.sleep(5)
     mainP.menu()
 
 def credCheck(RETURN=False):

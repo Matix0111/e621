@@ -57,7 +57,6 @@ class gatherPosts():
 
     def signin(self):
         self.tag = input('Artist/Tag: ')
-        artist = self.tag
         self.getMaxPages(self.tag)
 
 class downloadPosts():

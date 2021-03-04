@@ -7,5 +7,6 @@ HOW TO SET UP:
 
 [AUTH]
 e6Key = your_e6_api_key
+e6User = your_e6_username
 
 3. Start mainP.py.

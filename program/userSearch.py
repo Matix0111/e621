@@ -7,13 +7,13 @@ import configparser
 import time
 import mainP
 
-headers = {'user-agent': 'e621-image-downloader-project (by Matix on e621)'}
-
 config = configparser.ConfigParser()
 config.read('info.ini')
 
 e6User = config['AUTH']['e6User']
 e6Key = config['AUTH']['e6Key']
+
+headers = {'user-agent': f'e6Program (Used by {e6User} on e621)'}
 
 def main(RETURN=False):
     exit = False

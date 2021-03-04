@@ -13,6 +13,9 @@ from requests.auth import HTTPBasicAuth
 config = configparser.ConfigParser()
 config.read('info.ini')
 
+e6User = config['AUTH']['e6User']
+e6Key = config['AUTH']['e6Key']
+
 IDs = []
 
 class gatherPosts():
@@ -24,7 +27,7 @@ class gatherPosts():
         self.IDs = []
         self.poolID = 0
         self.tag = ""
-        self.headers = {'user-agent': f'e6Program (Used by {user} on e621)'}
+        self.headers = {'user-agent': f'e6Program (Used by {e6User} on e621)'}
 
     def getIDs(self, pages=None, tag=None, POOLVALUE=False):
         if pages == None and tag == None and POOLVALUE == True:
@@ -103,7 +106,7 @@ class gatherPosts():
         print(f'MAX PAGE: {self.pages}')
         self.getIDs(self.pages, tag)
     
-    def formatSearch(tags):
+    def formatSearch(self, tags):
         return tags.replace(' ', '+')
 
     def signin(self):
@@ -116,8 +119,8 @@ class gatherPosts():
             self.getIDs(pages=None, tag=None, POOLVALUE=True)
         
         elif ' ' in self.tag:
-            self.tag = formatSearch(self.tag)
-            self.getMaxPages(tempTag)
+            self.tag = self.formatSearch(self.tag)
+            self.getMaxPages(self.tag)
         else:
             self.getMaxPages(self.tag)
 
@@ -156,9 +159,6 @@ class downloadPosts():
             logging.info(f'Downloaded image {full_name}!')
             time.sleep(1)
 
-e6User = config['AUTH']['e6User']
-e6Key = config['AUTH']['e6Key']
-
 O = gatherPosts(e6User, e6Key)
 O.signin()
 
@@ -168,18 +168,21 @@ tag = O.tag
 fileMade = False
 
 try:
-    os.mkdir(f'DLs/{tag}')
-    fileMade = True
+    os.mkdir(f'DLs/')
 except FileExistsError:
-    overwrite = (input('The directory for this user already exists. Overwrite or abort? [O/a] ')).lower()
-
-    if overwrite == 'o':
-        shutil.rmtree(f'DLs/{tag}')
+    try:
         os.mkdir(f'DLs/{tag}')
-        fileMade = False
-    elif overwrite == 'a':
-        print('Abort.')
-        mainP.menu()
+        fileMade = True
+    except FileExistsError:
+        overwrite = (input('The directory for this user already exists. Overwrite or abort? [O/a] ')).lower()
+
+        if overwrite == 'o':
+            shutil.rmtree(f'DLs/{tag}')
+            os.mkdir(f'DLs/{tag}')
+            fileMade = False
+        elif overwrite == 'a':
+            print('Abort.')
+            mainP.menu()
 
 logging.basicConfig(filename=f'DLs/{tag}/{tag}_DL_LOG.log', level=logging.INFO, 
     format='%(asctime)s:DL_IMG:%(message)s')

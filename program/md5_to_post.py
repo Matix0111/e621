@@ -19,7 +19,7 @@ def main():
         if Hash == 'q':
             exit = True
         else:
-            headers = {'user-agent': 'e621-image-downloader-project (by Matix on e621)'}
+            headers = {'user-agent': f'e6Program (Used by {e6User} on e621)'}
             rq = requests.get(f'https://e621.net/posts.json?tags=md5%3A{Hash}', headers=headers, auth=(f'{e6User}', f'{e6Key}'))
             rqJSON = rq.json()
 

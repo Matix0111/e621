@@ -28,7 +28,7 @@ def main(RETURN=False):
             if post_id == 'q':
                 exit = True
             else:
-                headers = {'user-agent': 'e621-image-downloader-project (by Matix on e621)'}
+                headers = {'user-agent': f'e6Program (Used by {e6User} on e621)'}
                 responseRAW = requests.get(f'https://e621.net/posts/{post_id}.json', headers=headers, auth=(f'{e6User}', f'{e6Key}'))
                 responseJSON = responseRAW.json()
 

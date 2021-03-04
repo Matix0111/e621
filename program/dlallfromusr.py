@@ -24,7 +24,7 @@ class gatherPosts():
         self.IDs = []
         self.poolID = 0
         self.tag = ""
-        self.headers = {'user-agent': 'e6Program (By Matix on e621)'}
+        self.headers = {'user-agent': f'e6Program (Used by {user} on e621)'}
 
     def getIDs(self, pages=None, tag=None, POOLVALUE=False):
         if pages == None and tag == None and POOLVALUE == True:

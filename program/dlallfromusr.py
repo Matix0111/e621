@@ -102,6 +102,9 @@ class gatherPosts():
 
         print(f'MAX PAGE: {self.pages}')
         self.getIDs(self.pages, tag)
+    
+    def formatSearch(tags):
+        return tags.replace(' ', '+')
 
     def signin(self):
         self.tag = input('Artist/Tag (indicate a pool with pool_<pool_id> ): ')
@@ -111,6 +114,10 @@ class gatherPosts():
             self.poolID = self.poolID[1]
             # print(poolID)
             self.getIDs(pages=None, tag=None, POOLVALUE=True)
+        
+        elif ' ' in self.tag:
+            self.tag = formatSearch(self.tag)
+            self.getMaxPages(tempTag)
         else:
             self.getMaxPages(self.tag)
 

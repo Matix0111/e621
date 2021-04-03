@@ -132,6 +132,7 @@ class downloadPosts():
             responseJSON = response.json()
 
             data = responseJSON['post']['file']['url']
+            ID = responseJSON['post']['id']
 
             url = data
 
@@ -146,7 +147,7 @@ class downloadPosts():
                 print('Connection timed out!')
                 
             num += 1
-            logging.info(f'Downloaded image {full_name}!')
+            logging.info(f'Downloaded post {ID} as image {full_name}!')
             time.sleep(1)
 
 def Program():

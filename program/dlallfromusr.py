@@ -4,7 +4,7 @@ import os
 import shutil
 import time
 import logging
-import mainP
+# import mainP
 import configparser
 import urllib.request
 from tqdm import tqdm
@@ -47,7 +47,6 @@ class gatherPosts():
                     os.mkdir(f'DLs/pool_{name}')
                 elif overwrite == 'a':
                     print('Abort.')
-                    mainP.menu()
 
             print('Downloading images.')
 
@@ -75,36 +74,28 @@ class gatherPosts():
                 time.sleep(1)
             print('Finished.')
             time.sleep(5)
-        else:
 
-            print('Gathering post IDs')
-            for i in tqdm(range(pages)):
-                response = requests.get(f'https://e621.net/posts.json?page={i}&tags={tag}', headers=self.headers, auth=(self.user, self.api_key))
-                responseJSON = response.json()
-
-                data = responseJSON['posts']
-
-                for i in range(len(data)):
-                    self.IDs.append(data[i]['id'])
-                time.sleep(1)
-
-        print('GATHERED IDs')
-
-    def getMaxPages(self, tag):
-        print('Gathering max page')
+    def getMaxPages(self, tag, POOLVAL=False):
+        print('Gathering IDs from pages...')
         for i in range(750):
             response = requests.get(f'https://e621.net/posts.json?page={i}&tags={tag}', headers=self.headers, auth=(self.user, self.api_key))
+            responseJSON = response.json()
 
             if len(response.text) <= 12:
                 print('Last page has been reached.')
                 break
             else:
                 print(f'Found a page!')
+
+                data = responseJSON['posts']
+
+                for i in range(len(data)):
+                    self.IDs.append(data[i]['id'])
+                
+                print('Added IDs')
+
                 self.pages += 1
                 time.sleep(1)
-
-        print(f'MAX PAGE: {self.pages}')
-        self.getIDs(self.pages, tag)
     
     def formatSearch(self, tags):
         return tags.replace(' ', '+')
@@ -131,7 +122,6 @@ class downloadPosts():
         self.api_key = api_key
         self.IDs = IDs
         self.artist = Artist
-        self.tag = tag
         self.headers = {'user-agent': 'e6Program (By Matix on e621)'}
 
     def gatherURLs(self):
@@ -159,38 +149,38 @@ class downloadPosts():
             logging.info(f'Downloaded image {full_name}!')
             time.sleep(1)
 
-O = gatherPosts(e6User, e6Key)
-O.signin()
+def Program():
+    O = gatherPosts(e6User, e6Key)
+    O.signin()
 
-IDs = O.IDs
-tag = O.tag
+    IDs = O.IDs
+    tag = O.tag
 
-fileMade = False
+    fileMade = False
 
-try:
-    os.mkdir(f'DLs/')
-except FileExistsError:
     try:
-        os.mkdir(f'DLs/{tag}')
-        fileMade = True
+        os.mkdir(f'DLs/')
     except FileExistsError:
-        overwrite = (input('The directory for this user already exists. Overwrite or abort? [O/a] ')).lower()
-
-        if overwrite == 'o':
-            shutil.rmtree(f'DLs/{tag}')
+        try:
             os.mkdir(f'DLs/{tag}')
-            fileMade = False
-        elif overwrite == 'a':
-            print('Abort.')
-            mainP.menu()
+            fileMade = True
+        except FileExistsError:
+            overwrite = (input('The directory for this user already exists. Overwrite or abort? [O/a] ')).lower()
 
-logging.basicConfig(filename=f'DLs/{tag}/{tag}_DL_LOG.log', level=logging.INFO, 
-    format='%(asctime)s:DL_IMG:%(message)s')
+            if overwrite == 'o':
+                shutil.rmtree(f'DLs/{tag}')
+                os.mkdir(f'DLs/{tag}')
+                fileMade = False
+            elif overwrite == 'a':
+                print('Abort.')
 
-if fileMade:
-    logging.info(f'Directory DLs/{tag} created!')
-else:
-    logging.info(f'Directory DLs/{tag} overwritten!')
+    logging.basicConfig(filename=f'DLs/{tag}/{tag}_DL_LOG.log', level=logging.INFO, 
+        format='%(asctime)s:DL_IMG:%(message)s')
 
-D = downloadPosts(e6User, e6Key, IDs, tag)
-D.gatherURLs()
+    if fileMade:
+        logging.info(f'Directory DLs/{tag} created!')
+    else:
+        logging.info(f'Directory DLs/{tag} overwritten!')
+
+    D = downloadPosts(e6User, e6Key, IDs, tag)
+    D.gatherURLs()

@@ -1,4 +1,9 @@
 import subprocess as sp
+from program.downloadImage import dlImage as m1
+from program.userSearch import main as m2
+from program.picker import picker as m3
+from program.md5_to_post import run as m4
+from program.dlallfromusr import Program as m5
 
 def menu():
     sp.call('clear')
@@ -36,28 +41,21 @@ def menu():
     option = input('\nChoice: ')
 
     if option == '1':
-        from program.downloadImage import main
-        main(RETURN=False)
+        m1(RETURN=False)
     elif option == '2':
-        from program.userSearch import main
-        main(RETURN=False)
+        m2(RETURN=False)
     elif option == '3':
         picOrUser = (input('Content or User? [C/u] ')).lower()
         if picOrUser == 'u':
-            from program.picker import picker
-            picker(MODE='usr')
+            m3(MODE='usr')
         elif picOrUser == 'c':
-            from program.picker import picker
-            picker(MODE='img')
+            m3(MODE='img')
     elif option == '4':
-        from program.md5_to_post import main
-        main()
+        m4()
     elif option == '5':
-        import program.dlallfromusr
-
+        m5()
     elif option == '99':
         print('Thanks for using! Goodbye!')
-        pass
 
 if __name__ == '__main__':
     menu()

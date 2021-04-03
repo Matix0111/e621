@@ -2,7 +2,7 @@ import requests
 import json
 from requests.auth import HTTPBasicAuth
 import configparser
-import mainP
+# import mainP
 
 config = configparser.ConfigParser()
 config.read('info.ini')
@@ -10,7 +10,7 @@ config.read('info.ini')
 e6User = config['AUTH']['e6User']
 e6Key = config['AUTH']['e6Key']
 
-def main():
+def run():
     exit = False
     print('Enter "q" as post ID to quit.')
     while not exit:
@@ -32,4 +32,3 @@ def main():
             print('========================')
             print(f'POST ID: {postID}!')
             print('========================')
-    mainP.menu()

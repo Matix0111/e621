@@ -1,11 +1,8 @@
 import requests
 import urllib.request
-import json
-import random
 from requests.auth import HTTPBasicAuth
 import configparser
-import time
-import mainP
+# import mainP
 
 config = configparser.ConfigParser()
 config.read('info.ini')
@@ -25,7 +22,6 @@ def main(RETURN=False):
             exit = True
         else:
             responseRAW = requests.get(f'https://e621.net/users.json?search%5Bname_matches%5D={name}', headers=headers, auth=(f'{e6User}', f'{e6Key}'))
-            time.sleep(1)
             responseJSON = responseRAW.json()
 
             if len(responseJSON[0]) <= 0:
@@ -33,8 +29,7 @@ def main(RETURN=False):
                 exit = True
             else:
                 userID = responseJSON[0]['id']
-                response0 = requests.get(f'https://e621.net/users/{userID}.json', headers=headers, auth=(f'{e6User}', f'{e6Key}'))
-                time.sleep(1)
+                response0 = requests.get(f'https://e621.net/users/{userID}/edit.json', headers=headers, auth=(f'{e6User}', f'{e6Key}'))
                 response0JSON = response0.json()
                 if RETURN:
                     return response0JSON
@@ -47,7 +42,6 @@ def main(RETURN=False):
                     print(f'Username: {username}')
                     print(f'Banned: {banned}')
                     print(f'Avatar ID: {avatarID}')
-    mainP.menu()
 
 # if __name__ != '__main__':
 #     credCheck()

@@ -1,10 +1,10 @@
-import program.userSearch
-import program.downloadImage
-import mainP
+import userSearch
+import downloadImage
+# import mainP
 
 def picker(MODE=None):
     if MODE == 'img':
-        ret = program.downloadImage.main(RETURN=True)
+        ret = downloadImage.dlImage(RETURN=True)
         retI = ret.items()
         exit = False
         print('Type "help" for a list of commands.')
@@ -43,7 +43,7 @@ def picker(MODE=None):
                         output = output.split(' ')
                     except AttributeError:
                         try:
-                            print(output[0] + ", " + output[1])
+                            print(", ".join(output))
                         except IndexError:
                             print(output[0])
                         continue
@@ -62,10 +62,9 @@ def picker(MODE=None):
                         print(output)
             elif command == 'q':
                 exit = True
-        mainP.menu()
 
     elif MODE == 'usr':
-        ret = program.userSearch.main(RETURN=True)
+        ret = userSearch.main(RETURN=True)
         retI = ret.items()
         exit = False
         print('Type "help" for a list of commands.')
@@ -95,6 +94,7 @@ def picker(MODE=None):
                     print('Invalid key!')
             elif command == 'q':
                 exit = True
-        mainP.menu()
+            else:
+                print('Not a valid command.')
     else:
         print('Something is misconfigured.')

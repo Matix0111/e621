@@ -77,7 +77,7 @@ class gatherPosts():
 
     def getMaxPages(self, tag, POOLVAL=False):
         print('Gathering IDs from pages...')
-        for i in range(750):
+        for i in range(1, 750):
             response = requests.get(f'https://e621.net/posts.json?page={i}&tags={tag}', headers=self.headers, auth=(self.user, self.api_key))
             responseJSON = response.json()
 

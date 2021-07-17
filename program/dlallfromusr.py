@@ -1,5 +1,4 @@
 import requests
-import json
 import os
 import shutil
 import time
@@ -19,12 +18,12 @@ e6Key = config['AUTH']['e6Key']
 IDs = []
 
 class gatherPosts():
-
     def __init__(self, user, api_key):
         self.user = user
         self.api_key = api_key
         self.pages = 0
         self.IDs = []
+        self.URLs = []
         self.poolID = 0
         self.tag = ""
         self.headers = {'user-agent': f'e6Program (Used by {e6User} on e621)'}
@@ -90,9 +89,10 @@ class gatherPosts():
                 data = responseJSON['posts']
 
                 for i in range(len(data)):
+                    self.URLs.append(data[i]['file']['url'])
                     self.IDs.append(data[i]['id'])
                 
-                print('Added IDs')
+                print('Added URLs')
 
                 self.pages += 1
                 time.sleep(1)
@@ -116,26 +116,18 @@ class gatherPosts():
             self.getMaxPages(self.tag)
 
 class downloadPosts():
-
-    def __init__(self, user, api_key, IDs, Artist):
+    def __init__(self, user, api_key, IDs, Artist, URLs):
         self.user = user
         self.api_key = api_key
         self.IDs = IDs
+        self.URLs = URLs
         self.artist = Artist
         self.headers = {'user-agent': 'e6Program (By Matix on e621)'}
 
     def gatherURLs(self):
         print('Downloading images.')
         num = 0
-        for i in tqdm(range(len(self.IDs))):
-            response = requests.get(f'https://e621.net/posts/{self.IDs[i]}.json', headers=self.headers, auth=(self.user, self.api_key))
-            responseJSON = response.json()
-
-            data = responseJSON['post']['file']['url']
-            ID = responseJSON['post']['id']
-
-            url = data
-
+        for url, _id in tqdm(zip(self.URLs, self.IDs), total=len(self.URLs)):
             fileExt = url.split('.')
             fileExt = fileExt[-1]
 
@@ -147,8 +139,7 @@ class downloadPosts():
                 print('Connection timed out!')
                 
             num += 1
-            logging.info(f'Downloaded post {ID} as image {full_name}!')
-            time.sleep(1)
+            logging.info(f'Downloaded post {_id} as image {full_name}!')
 
 def Program():
     O = gatherPosts(e6User, e6Key)
@@ -156,6 +147,7 @@ def Program():
 
     IDs = O.IDs
     tag = O.tag
+    URLs = O.URLs
 
     fileMade = False
 
@@ -183,5 +175,5 @@ def Program():
     else:
         logging.info(f'Directory DLs/{tag} overwritten!')
 
-    D = downloadPosts(e6User, e6Key, IDs, tag)
+    D = downloadPosts(e6User, e6Key, IDs, tag, URLs)
     D.gatherURLs()

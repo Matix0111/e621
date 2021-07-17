@@ -4,7 +4,7 @@ import program.downloadImage
 
 def picker(MODE=None):
     if MODE == 'img':
-        ret = downloadImage.dlImage(RETURN=True)
+        ret = program.downloadImage.dlImage(RETURN=True)
         retI = ret.items()
         exit = False
         print('Type "help" for a list of commands.')
@@ -64,7 +64,7 @@ def picker(MODE=None):
                 exit = True
 
     elif MODE == 'usr':
-        ret = userSearch.main(RETURN=True)
+        ret = program.userSearch.main(RETURN=True)
         retI = ret.items()
         exit = False
         print('Type "help" for a list of commands.')

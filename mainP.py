@@ -2,6 +2,7 @@ import subprocess as sp
 import platform
 import atexit
 import shutil
+import argparse
 from program.downloadImage import dlImage as m1
 from program.userSearch import main as m2
 from program.picker import picker as m3
@@ -9,6 +10,22 @@ from program.md5_to_post import run as m4
 from program.dlallfromusr import Program as m5
 
 OS = platform.system()
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-t', '--threads', help='# of threads to use. Default is 1.', required=False)
+args, *leftover = parser.parse_known_args()
+
+if args.threads is not None:
+    if not (args.threads).isdigit():
+        print('Number of threads must be a number')
+        exit()
+    else:
+        num_of_threads = int(args.threads)
+        if num_of_threads > 5 or num_of_threads < 1:
+            print('Out of bounds. # of threads must be between 1-5')
+            exit()
+else:
+    num_of_threads = 1
 
 @atexit.register
 def clear_pycache():
@@ -72,7 +89,7 @@ def menu():
         elif option == '4':
             m4()
         elif option == '5':
-            m5()
+            m5(num_of_threads)
         elif option == '99':
             _EXIT = True
             print('Thanks for using! Goodbye!')

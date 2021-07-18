@@ -8,6 +8,13 @@ import configparser
 import urllib.request
 from tqdm import tqdm
 from requests.auth import HTTPBasicAuth
+import threading
+import queue
+
+url_q = queue.Queue()
+id_q = queue.Queue()
+
+thread_lock = threading.Lock()
 
 config = configparser.ConfigParser()
 config.read('info.ini')
@@ -89,8 +96,8 @@ class gatherPosts():
                 data = responseJSON['posts']
 
                 for i in range(len(data)):
-                    self.URLs.append(data[i]['file']['url'])
-                    self.IDs.append(data[i]['id'])
+                    url_q.put(data[i]['file']['url'])
+                    id_q.put(data[i]['id'])
                 
                 print('Added URLs')
 
@@ -116,36 +123,79 @@ class gatherPosts():
             self.getMaxPages(self.tag)
 
 class downloadPosts():
-    def __init__(self, user, api_key, IDs, Artist, URLs):
+    def __init__(self, user, api_key, threads, Artist, URLs):
         self.user = user
         self.api_key = api_key
-        self.IDs = IDs
+        self.threads = threads
         self.URLs = URLs
+        self.x = 0
+        self.post = 0
         self.artist = Artist
         self.headers = {'user-agent': 'e6Program (By Matix on e621)'}
 
-    def gatherURLs(self):
-        print('Downloading images.')
-        num = 0
-        for url, _id in tqdm(zip(self.URLs, self.IDs), total=len(self.URLs)):
-            fileExt = url.split('.')
-            fileExt = fileExt[-1]
+    def download_image(self):
+        while not url_q.empty():
+            # thread_lock.acquire()
+            if url_q.empty():
+                pass
+            else:
+                url = url_q.get()
+                fileExt = url.split('.')[-1]
 
-            filename = f'{self.artist}_{num}'
-            full_name = f'DLs/{self.artist}/{filename}.{fileExt}'
-            try:
-                urllib.request.urlretrieve(url, full_name)
-            except urllib.error.URLError:
-                print('Connection timed out!')
+                filename = f'{self.artist}_{self.x}'
+                self.x += 1
+                self.post += 1
+                full_name = f'DLs/{self.artist}/{filename}.{fileExt}'
+
+                try:
+                    urllib.request.urlretrieve(url, full_name)
+                except urllib.error.URLError:
+                    print('Connection timed out!')
                 
-            num += 1
-            logging.info(f'Downloaded post {_id} as image {full_name}!')
+                logging.info(f'Downloaded post {id_q.get()} as image {full_name}!')
+                if self.post % 50 == 0:
+                    print(f'post {self.post} passed!')
 
-def Program():
+            # thread_lock.release()
+
+    def gatherURLs(self):
+        print(f'Downloading {url_q.qsize()} images...')
+        if self.threads > 1:
+            _threads = []
+            for _ in range(self.threads):
+                _threads.append(threading.Thread(target=self.download_image))
+
+            for thread in _threads:
+                thread.start()
+            
+            print(f'THREADS: {threading.active_count()-1}')
+            
+            for thread in _threads:
+                thread.join()
+        else:
+            self.download_image()
+
+    # def gatherURLs(self):
+    #     print('Downloading images.')
+    #     num = 0
+    #     for url, _id in tqdm(zip(self.URLs, self.IDs), total=len(self.URLs)):
+    #         fileExt = url.split('.')
+    #         fileExt = fileExt[-1]
+
+    #         filename = f'{self.artist}_{num}'
+    #         full_name = f'DLs/{self.artist}/{filename}.{fileExt}'
+    #         try:
+    #             urllib.request.urlretrieve(url, full_name)
+    #         except urllib.error.URLError:
+    #             print('Connection timed out!')
+                
+    #         num += 1
+    #         logging.info(f'Downloaded post {_id} as image {full_name}!')
+
+def Program(num_of_threads):
     O = gatherPosts(e6User, e6Key)
     O.signin()
 
-    IDs = O.IDs
     tag = O.tag
     URLs = O.URLs
 
@@ -175,5 +225,8 @@ def Program():
     else:
         logging.info(f'Directory DLs/{tag} overwritten!')
 
-    D = downloadPosts(e6User, e6Key, IDs, tag, URLs)
+    D = downloadPosts(e6User, e6Key, num_of_threads, tag, URLs)
+    start = time.time()
     D.gatherURLs()
+    print(f'Took {(time.time() - start)/60:.2f} minutes')
+    input('Press enter to continue...')

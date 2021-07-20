@@ -2,12 +2,15 @@ import subprocess as sp
 import platform
 import atexit
 import shutil
+import time
 import argparse
 from program.downloadImage import dlImage as m1
 from program.userSearch import main as m2
 from program.picker import picker as m3
 from program.md5_to_post import run as m4
 from program.dlallfromusr import Program as m5
+from program.compress_all import Compress as m6
+
 
 OS = platform.system()
 
@@ -26,6 +29,12 @@ if args.threads is not None:
             exit()
 else:
     num_of_threads = 1
+
+thread_string = f"[!] "
+if num_of_threads > 1:
+    thread_string += f"{num_of_threads} THREADS"
+else:
+    thread_string += 'SINGLE-THREADED'
 
 @atexit.register
 def clear_pycache():
@@ -65,13 +74,14 @@ def menu():
         print("# ################## ################## #")
         print("#########################################\n")
 
-        print('OPTIONS:\n')
+        print(f'OPTIONS:\t{thread_string}\n')
 
         print('\t Download Image            [1]')
         print('\t User Search               [2]')
         print('\t Explorer                  [3]')
         print('\t MD5 To Post               [4]')
         print('\t Download All From User    [5]')
+        print('\t Compress Downloads        [6]')
         print('\t Exit Program              [99]')
 
         option = input('\nChoice: ')
@@ -90,6 +100,9 @@ def menu():
             m4()
         elif option == '5':
             m5(num_of_threads)
+        elif option == '6':
+            compress = m6()
+            compress.run_all()
         elif option == '99':
             _EXIT = True
             print('Thanks for using! Goodbye!')

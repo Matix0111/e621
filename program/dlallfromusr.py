@@ -141,6 +141,7 @@ class downloadPosts():
             else:
                 url = url_q.get()
                 fileExt = url.split('.')[-1]
+                fileMD5 = url.split('/')[-1]
 
                 filename = f'{self.artist}_{self.x}'
                 self.x += 1
@@ -155,11 +156,14 @@ class downloadPosts():
                 logging.info(f'Downloaded post {id_q.get()} as image {full_name}!')
                 if self.post % 50 == 0:
                     print(f'post {self.post} passed!')
+                
+                print(f'{fileMD5} downloaded.')
 
             # thread_lock.release()
 
     def gatherURLs(self):
-        print(f'Downloading {url_q.qsize()} images...')
+        num_of_urls = url_q.qsize()
+        print(f'Downloading {num_of_urls} images...')
         if self.threads > 1:
             _threads = []
             for _ in range(self.threads):
@@ -174,7 +178,10 @@ class downloadPosts():
                 thread.join()
         else:
             self.download_image()
+        
+        print(f'Successfully downloaded {num_of_urls} images.')
 
+    # ====================== OLD (single-threaded) ======================
     # def gatherURLs(self):
     #     print('Downloading images.')
     #     num = 0

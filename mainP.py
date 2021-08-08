@@ -2,7 +2,6 @@ import subprocess as sp
 import platform
 import atexit
 import shutil
-import time
 import argparse
 from program.downloadImage import dlImage as m1
 from program.userSearch import main as m2
@@ -45,6 +44,26 @@ def clear_pycache():
     finally:
         shutil.rmtree('program/__pycache__')
 
+banner = """
+#########################################
+# ################## ################## #
+# #                # #                # #
+# #    ############# #    ############# #
+# #    #             #    #             #
+# #    #             #    #             #
+# #    #             #    #             #
+# #    ########      #    ############# #
+# #           #      #                # #
+# #    ########      #    ########    # #
+# #    #             #    #      #    # #
+# #    #             #    #      #    # #
+# #    #             #    #      #    # #
+# #    ############# #    ########    # #
+# #                # #                # #
+# ################## ################## #
+#########################################
+"""
+
 def menu():
     _EXIT = False
     while not _EXIT:
@@ -52,28 +71,8 @@ def menu():
             sp.call('clear')
         elif OS == 'Windows':
             sp.call('cls')
-        print("#########################################")
-        print("# ################## ################## #")
-        print("# #                # #                # #")
-        print("# #    ############# #    ############# #")
-        print("# #    #             #    #             #")
-        print("# #    #             #    #             #")
-        print("# #    #	     #    #             #")
-        print("# #    #             #    #             #")
-        print("# #    #             #    #             #")
-        print("# #    ########      #    ############# #")
-        print("# #           #      #                # #")
-        print("# #    ########      #    ########    # #")
-        print("# #    #             #    #      #    # #")
-        print("# #    #             #    #      #    # #")
-        print("# #    #             #    #      #    # #")
-        print("# #    #             #    #      #    # #")
-        print("# #    #             #    #      #    # #")
-        print("# #    ############# #    ########    # #")
-        print("# #                # #                # #")
-        print("# ################## ################## #")
-        print("#########################################\n")
 
+        print(banner)
         print(f'OPTIONS:\t{thread_string}\n')
 
         print('\t Download Image            [1]')

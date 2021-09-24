@@ -1,4 +1,4 @@
-import subprocess as sp
+import os
 import platform
 import atexit
 import shutil
@@ -9,7 +9,7 @@ from program.picker import picker as m3
 from program.md5_to_post import run as m4
 from program.dlallfromusr import Program as m5
 from program.compress_all import Compress as m6
-
+from program.encrypt_downloads import DownloadEncryptor, DownloadDecryptor
 
 OS = platform.system()
 
@@ -68,9 +68,9 @@ def menu():
     _EXIT = False
     while not _EXIT:
         if OS == 'Linux':
-            sp.call('clear')
+            os.system('clear')
         elif OS == 'Windows':
-            sp.call('cls')
+            os.system('cls')
 
         print(banner)
         print(f'OPTIONS:\t{thread_string}\n')
@@ -81,6 +81,8 @@ def menu():
         print('\t MD5 To Post               [4]')
         print('\t Download All From User    [5]')
         print('\t Compress Downloads        [6]')
+        print('\t Encrypt Downloads         [7]')
+        print('\t Decrypt Downloads         [8]')
         print('\t Exit Program              [99]')
 
         option = input('\nChoice: ')
@@ -102,9 +104,18 @@ def menu():
         elif option == '6':
             compress = m6()
             compress.run_all()
+        elif option == '7':
+            de = DownloadEncryptor()
+            de.start()
+        elif option == '8':
+            de = DownloadDecryptor()
+            de.start()
         elif option == '99':
             _EXIT = True
             print('Thanks for using! Goodbye!')
+        
+        if not _EXIT:
+            input('Press enter to continue...')
 
 if __name__ == '__main__':
     menu()
